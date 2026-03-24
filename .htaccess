@@ -1,0 +1,80 @@
+# Apache .htaccess – Digital Empire PWA
+
+# ── HTTPS Redirect ─────────────────────────────────────────────────────────
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} off
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# ── Security Headers ───────────────────────────────────────────────────────
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-XSS-Protection "1; mode=block"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; worker-src 'self';"
+</IfModule>
+
+# ── Service Worker Scope ───────────────────────────────────────────────────
+<Files "service-worker.js">
+  <IfModule mod_headers.c>
+    Header set Service-Worker-Allowed "/"
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+  </IfModule>
+</Files>
+
+# ── Manifest ───────────────────────────────────────────────────────────────
+<Files "manifest.json">
+  <IfModule mod_headers.c>
+    Header set Cache-Control "public, max-age=86400"
+  </IfModule>
+</Files>
+
+# ── Caching ────────────────────────────────────────────────────────────────
+<IfModule mod_expires.c>
+  ExpiresActive On
+
+  # HTML – no cache (always revalidate)
+  ExpiresByType text/html                   "access plus 0 seconds"
+
+  # Static assets – 1 year
+  ExpiresByType image/png                   "access plus 1 year"
+  ExpiresByType image/jpeg                  "access plus 1 year"
+  ExpiresByType image/svg+xml               "access plus 1 year"
+  ExpiresByType image/webp                  "access plus 1 year"
+  ExpiresByType image/x-icon               "access plus 1 year"
+  ExpiresByType application/javascript      "access plus 1 year"
+  ExpiresByType text/javascript             "access plus 1 year"
+  ExpiresByType text/css                    "access plus 1 year"
+  ExpiresByType application/font-woff2      "access plus 1 year"
+  ExpiresByType application/font-woff       "access plus 1 year"
+</IfModule>
+
+# ── Compression ────────────────────────────────────────────────────────────
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css
+  AddOutputFilterByType DEFLATE application/javascript text/javascript
+  AddOutputFilterByType DEFLATE application/json application/manifest+json
+  AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# ── MIME Types ─────────────────────────────────────────────────────────────
+<IfModule mod_mime.c>
+  AddType application/manifest+json  .webmanifest .json
+  AddType application/javascript     .js .mjs
+  AddType image/webp                 .webp
+  AddType image/svg+xml              .svg
+</IfModule>
+
+# ── SPA Fallback (route all requests to index.html) ────────────────────────
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <!-- Primary Meta Tags -->
+  <title>Digital Empire – DOMISLINK International</title>
+  <meta name="title" content="Digital Empire – DOMISLINK International" />
+  <meta name="description" content="DOMISLINK International Progressive Web App – Your Digital Empire Awaits. Access your dashboard anywhere, even offline." />
+  <meta name="keywords" content="digital empire, domislink, international, PWA, progressive web app" />
+  <meta name="author" content="DOMISLINK International" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- PWA Meta Tags -->
+  <meta name="application-name" content="Digital Empire" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Digital Empire" />
+  <meta name="theme-color" content="#1a1a6e" />
+  <meta name="msapplication-TileColor" content="#0a0a2e" />
+  <meta name="msapplication-TileImage" content="/icons/icon-144x144.png" />
+
+  <!-- Open Graph / Social -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://digital-empire.domislink.com/" />
+  <meta property="og:title" content="Digital Empire – DOMISLINK International" />
+  <meta property="og:description" content="Your Digital Empire Awaits. Progressive Web App by DOMISLINK International." />
+  <meta property="og:image" content="/icons/icon-512x512.png" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Digital Empire – DOMISLINK International" />
+  <meta name="twitter:description" content="Your Digital Empire Awaits." />
+  <meta name="twitter:image" content="/icons/icon-512x512.png" />
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- Apple Touch Icons -->
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+  <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png" />
+  <link rel="apple-touch-icon" sizes="144x144" href="/icons/icon-144x144.png" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png" />
+  <link rel="shortcut icon" href="/icons/icon-96x96.png" />
+
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --color-bg: #0a0a2e;
+      --color-surface: #12123d;
+      --color-primary: #1a1a6e;
+      --color-accent: #4f46e5;
+      --color-gold: #f59e0b;
+      --color-text: #e2e8f0;
+      --color-text-muted: #94a3b8;
+      --color-success: #10b981;
+      --color-error: #ef4444;
+      --radius: 12px;
+      --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+
+    html { height: 100%; scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── App Shell ────────────────────────────────────────────── */
+    #app-shell { display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* ── Header / Nav ─────────────────────────────────────────── */
+    header {
+      background: var(--color-surface);
+      padding: 0 1.5rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+    .brand-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--color-accent), var(--color-gold));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.25rem; font-weight: 700; color: #fff;
+    }
+    .brand-name { font-size: 1.1rem; font-weight: 700; color: var(--color-text); }
+    .brand-sub  { font-size: 0.65rem; color: var(--color-gold); text-transform: uppercase; letter-spacing: 1px; }
+
+    nav { display: flex; gap: 0.5rem; }
+    nav a {
+      padding: 0.5rem 1rem; border-radius: var(--radius);
+      color: var(--color-text-muted); text-decoration: none;
+      font-size: 0.9rem; transition: all 0.2s;
+    }
+    nav a:hover, nav a.active { background: var(--color-primary); color: var(--color-text); }
+
+    /* ── Hero ─────────────────────────────────────────────────── */
+    .hero {
+      flex: 1;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 4rem 1.5rem;
+      background: radial-gradient(ellipse at center, #1a1a6e 0%, #0a0a2e 70%);
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(79,70,229,0.2); border: 1px solid rgba(79,70,229,0.4);
+      color: var(--color-accent); padding: 0.4rem 1rem;
+      border-radius: 50px; font-size: 0.8rem; margin-bottom: 1.5rem;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #fff 40%, var(--color-gold));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--color-text-muted);
+      max-width: 560px;
+      margin-bottom: 2.5rem;
+      line-height: 1.7;
+    }
+
+    .cta-group { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+
+    .btn {
+      padding: 0.75rem 1.75rem; border-radius: var(--radius);
+      font-size: 1rem; font-weight: 600; cursor: pointer;
+      border: none; text-decoration: none; transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--color-accent), #7c3aed);
+      color: #fff; box-shadow: 0 4px 14px rgba(79,70,229,0.4);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(79,70,229,0.5); }
+    .btn-outline {
+      background: transparent; color: var(--color-text);
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    .btn-outline:hover { border-color: var(--color-accent); color: var(--color-accent); }
+
+    /* Install button – hidden until prompt available */
+    #install-btn { display: none; }
+
+    /* ── Feature Cards ────────────────────────────────────────── */
+    .features {
+      padding: 4rem 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .card {
+      background: var(--color-surface);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+    .card-icon { font-size: 2rem; margin-bottom: 1rem; }
+    .card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .card p { font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6; }
+
+    /* ── Toast Notification ───────────────────────────────────── */
+    #toast {
+      position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+      background: var(--color-surface); color: var(--color-text);
+      padding: 0.85rem 1.5rem; border-radius: var(--radius);
+      box-shadow: var(--shadow); font-size: 0.9rem;
+      display: none; z-index: 999;
+      border-left: 4px solid var(--color-accent);
+      white-space: nowrap;
+    }
+    #toast.show { display: block; animation: slideUp 0.3s ease; }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateX(-50%) translateY(16px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    /* ── Offline Banner ───────────────────────────────────────── */
+    #offline-banner {
+      background: var(--color-error); color: #fff;
+      text-align: center; padding: 0.6rem;
+      font-size: 0.85rem; display: none;
+    }
+    #offline-banner.show { display: block; }
+
+    /* ── Footer ───────────────────────────────────────────────── */
+    footer {
+      background: var(--color-surface);
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    footer a { color: var(--color-gold); text-decoration: none; }
+
+    /* ── Responsive ───────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="app-shell">
+
+  <!-- Offline Banner -->
+  <div id="offline-banner">⚠️ You are currently offline. Some features may be limited.</div>
+
+  <!-- Header -->
+  <header>
+    <a class="brand" href="/">
+      <div class="brand-icon">DE</div>
+      <div>
+        <div class="brand-name">Digital Empire</div>
+        <div class="brand-sub">DOMISLINK International</div>
+      </div>
+    </a>
+    <nav>
+      <a href="/" class="active">Home</a>
+      <a href="/dashboard">Dashboard</a>
+      <a href="/about">About</a>
+      <a href="/contact">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <main>
+    <section class="hero">
+      <div class="hero-badge">
+        <span>📱</span> Installable PWA – Works Offline
+      </div>
+      <h1>Your Digital Empire Awaits</h1>
+      <p>
+        DOMISLINK International brings you a powerful, fast, and fully offline-capable
+        Progressive Web App. Install it on any device and take your empire with you.
+      </p>
+      <div class="cta-group">
+        <button id="install-btn" class="btn btn-primary">⬇ Install App</button>
+        <a href="/dashboard" class="btn btn-primary">🚀 Get Started</a>
+        <a href="#features" class="btn btn-outline">Learn More</a>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features" id="features">
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <h3>Lightning Fast</h3>
+        <p>Instant load times with intelligent service worker caching and pre-cached app shell.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔌</div>
+        <h3>Works Offline</h3>
+        <p>Full offline support. Continue working without an internet connection, seamlessly.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📲</div>
+        <h3>Installable</h3>
+        <p>Install on any device – Android, iOS, Windows, Mac – directly from your browser.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔔</div>
+        <h3>Push Notifications</h3>
+        <p>Stay updated with real-time push notifications for important events and updates.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔒</div>
+        <h3>Secure by Default</h3>
+        <p>HTTPS enforced, strict security headers, and safe caching strategies built-in.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌍</div>
+        <h3>Global Reach</h3>
+        <p>DOMISLINK International serving users worldwide with enterprise-grade reliability.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>© <span id="year"></span> <a href="/">DOMISLINK International</a> – Digital Empire PWA. All rights reserved.</p>
+  </footer>
+
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="/app.js" defer></script>
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
