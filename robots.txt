@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Disallow sensitive paths
+Disallow: /api/
+Disallow: /node_modules/
+Disallow: /.git/
+Disallow: /.env
+Disallow: /service-worker.js
+
+# Sitemap location
+Sitemap: https://digital-empire.domislink.com/sitemap.xml

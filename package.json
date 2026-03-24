@@ -1,0 +1,27 @@
+{
+  "name": "digital-empire",
+  "version": "1.0.0",
+  "description": "DOMISLINK International Progressive Web App – Digital Empire",
+  "private": true,
+  "homepage": "https://digital-empire.domislink.com",
+  "keywords": [
+    "pwa",
+    "progressive-web-app",
+    "domislink",
+    "digital-empire"
+  ],
+  "author": "DOMISLINK International",
+  "license": "MIT",
+  "scripts": {
+    "start": "npx serve . -l 3000",
+    "dev": "npx serve . -l 3000 --no-clipboard",
+    "lint": "npx htmlhint index.html offline.html",
+    "test": "echo \"No test runner configured\" && exit 0"
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

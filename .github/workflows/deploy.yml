@@ -1,0 +1,93 @@
+name: Deploy Digital Empire PWA
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  # ── Validate ───────────────────────────────────────────────────────────────
+  validate:
+    name: Validate PWA Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check required PWA files
+        run: |
+          files=(
+            "index.html"
+            "manifest.json"
+            "service-worker.js"
+            "app.js"
+            "offline.html"
+            "robots.txt"
+            "sitemap.xml"
+            "icons/icon-192x192.png"
+            "icons/icon-512x512.png"
+          )
+          all_ok=true
+          for f in "${files[@]}"; do
+            if [ -f "$f" ]; then
+              echo "✅ $f"
+            else
+              echo "❌ Missing: $f"
+              all_ok=false
+            fi
+          done
+          if [ "$all_ok" = false ]; then
+            echo "One or more required PWA files are missing."
+            exit 1
+          fi
+          echo "All required PWA files present."
+
+      - name: Validate manifest.json
+        run: |
+          python3 -c "
+          import json, sys
+          with open('manifest.json') as f:
+              m = json.load(f)
+          required = ['name','short_name','start_url','display','icons']
+          missing = [k for k in required if k not in m]
+          if missing:
+              print('manifest.json missing keys:', missing)
+              sys.exit(1)
+          print('manifest.json is valid')
+          "
+
+  # ── Deploy to GitHub Pages ─────────────────────────────────────────────────
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: validate
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
