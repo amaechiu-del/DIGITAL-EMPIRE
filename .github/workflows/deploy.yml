@@ -122,9 +122,11 @@ jobs:
     name: Server Smoke Test
     needs: validate
     runs-on: ubuntu-latest
+    # Only run when secrets are available (they are not available in forks / PRs from external contributors)
+    if: ${{ secrets.PAYSTACK_PUBLIC_KEY != '' && secrets.PAYSTACK_SECRET_KEY != '' }}
     env:
-      PAYSTACK_PUBLIC_KEY: ${{ secrets.PAYSTACK_PUBLIC_KEY || 'pk_test_placeholder' }}
-      PAYSTACK_SECRET_KEY: ${{ secrets.PAYSTACK_SECRET_KEY || 'sk_test_placeholder' }}
+      PAYSTACK_PUBLIC_KEY: ${{ secrets.PAYSTACK_PUBLIC_KEY }}
+      PAYSTACK_SECRET_KEY: ${{ secrets.PAYSTACK_SECRET_KEY }}
       NODE_ENV: test
       APP_PORT: 3001
     steps:

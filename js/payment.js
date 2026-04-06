@@ -19,7 +19,14 @@ const META_KEY = document
   .querySelector('meta[name="paystack-public-key"]')
   ?.getAttribute('content');
 
-const PAYSTACK_PUBLIC_KEY = META_KEY || 'pk_test_REPLACE_WITH_YOUR_PUBLIC_KEY';
+if (!META_KEY) {
+  console.error(
+    '[payment] Paystack public key not found. ' +
+    'Add <meta name="paystack-public-key" content="pk_..."> to your HTML.',
+  );
+}
+
+const PAYSTACK_PUBLIC_KEY = META_KEY || '';
 const VERIFY_ENDPOINT     = '/api/payment/verify';   // your backend route
 const MAX_RETRIES         = 3;
 
@@ -166,6 +173,11 @@ function handlePaymentFailure(reason) {
 
 // ── Paystack Popup Init ───────────────────────────────────────────────────
 function initiatePaystackPayment({ email, firstName, lastName, phone, amountKobo, orderRef }) {
+  if (!PAYSTACK_PUBLIC_KEY) {
+    handlePaymentFailure('Payment is not configured. Please contact support.');
+    setPayButtonLoading(false);
+    return;
+  }
   if (typeof PaystackPop === 'undefined') {
     handlePaymentFailure('Paystack SDK could not be loaded. Check your internet connection.');
     setPayButtonLoading(false);

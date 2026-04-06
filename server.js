@@ -153,8 +153,8 @@ app.post('/api/payment/verify', paymentLimiter, cors(corsOptions), async (req, r
     return res.status(400).json({ status: 'error', message: 'Missing payment reference.' });
   }
 
-  // Sanitise reference – Paystack refs are alphanumeric + hyphens
-  if (!/^[A-Za-z0-9_-]{5,100}$/.test(reference)) {
+  // Sanitise reference – accept our generated DE-XXXXX-XXXXXX format and Paystack's alphanumeric refs
+  if (!/^[A-Za-z0-9-]{5,100}$/.test(reference)) {
     return res.status(400).json({ status: 'error', message: 'Invalid payment reference format.' });
   }
 
@@ -257,7 +257,7 @@ function handleTransferEvent(event) {
 }
 
 // ── SPA fallback – serve index.html for unmatched GET routes ──────────────
-app.get('*', (req, res) => {
+app.get('*', apiLimiter, (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 

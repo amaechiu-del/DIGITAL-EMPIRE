@@ -135,7 +135,7 @@ const Cart = {
     return cartItems.reduce((acc, i) => acc + i.qty, 0);
   },
 
-  /** Total price in Naira (kobo = × 100 when sending to Paystack). */
+  /** Total price in Naira. Multiply by 100 when sending to Paystack (kobo). */
   total() {
     return cartItems.reduce((acc, i) => acc + i.price * i.qty, 0);
   },
@@ -156,8 +156,8 @@ const Cart = {
 };
 
 // ── DOM Helpers ────────────────────────────────────────────────────────────
-function formatPrice(kobo) {
-  return '₦' + kobo.toLocaleString('en-NG');
+function formatPrice(naira) {
+  return '₦' + naira.toLocaleString('en-NG');
 }
 
 function updateCartBadge() {
