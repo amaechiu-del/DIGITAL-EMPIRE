@@ -123,7 +123,7 @@ jobs:
     needs: validate
     runs-on: ubuntu-latest
     # Only run when secrets are available (they are not available in forks / PRs from external contributors)
-    if: ${{ secrets.PAYSTACK_PUBLIC_KEY != '' && secrets.PAYSTACK_SECRET_KEY != '' }}
+    if: secrets.PAYSTACK_PUBLIC_KEY != '' && secrets.PAYSTACK_SECRET_KEY != ''
     env:
       PAYSTACK_PUBLIC_KEY: ${{ secrets.PAYSTACK_PUBLIC_KEY }}
       PAYSTACK_SECRET_KEY: ${{ secrets.PAYSTACK_SECRET_KEY }}

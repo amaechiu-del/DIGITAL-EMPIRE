@@ -154,7 +154,7 @@ app.post('/api/payment/verify', paymentLimiter, cors(corsOptions), async (req, r
   }
 
   // Sanitise reference – accept our generated DE-XXXXX-XXXXXX format and Paystack's alphanumeric refs
-  if (!/^[A-Za-z0-9-]{5,100}$/.test(reference)) {
+  if (!/^[A-Za-z0-9-]{10,100}$/.test(reference)) {
     return res.status(400).json({ status: 'error', message: 'Invalid payment reference format.' });
   }
 

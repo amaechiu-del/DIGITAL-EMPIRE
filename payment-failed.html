@@ -83,11 +83,13 @@
   <script>
     'use strict';
     const params    = new URLSearchParams(window.location.search);
-    const errMsg    = params.get('reason') || 'An unexpected error occurred.';
+    const rawReason = params.get('reason') || '';
     const detailsEl = document.getElementById('error-details');
     if (detailsEl) {
-      // Sanitize before inserting
-      detailsEl.textContent = errMsg;
+      // Only display safe, short error strings (max 200 chars, strip anything unusual)
+      const safeReason = rawReason.replace(/[^\w\s.,!?():'-]/g, '').slice(0, 200).trim()
+                         || 'An unexpected error occurred.';
+      detailsEl.textContent = safeReason;
     }
 
     // "Try Again" opens checkout modal on homepage

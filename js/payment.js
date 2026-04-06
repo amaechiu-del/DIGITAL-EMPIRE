@@ -264,7 +264,7 @@ function handleCheckoutSubmit(e) {
     firstName,
     lastName,
     phone,
-    amountKobo: total * 100,  // convert Naira to kobo
+    amountKobo: Math.round(total * 100),  // convert Naira to kobo (round to avoid float precision errors)
     orderRef,
   });
 }
