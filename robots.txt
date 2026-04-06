@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /node_modules/
+Disallow: /.env
+Disallow: /server.js
+
+Sitemap: https://amaechiu-del.github.io/DIGITAL-EMPIRE/sitemap.xml

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#6c63ff" />
+  <title>Offline | DIGITAL-EMPIRE</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0a0a1a; color: #e8e8f0;
+      min-height: 100vh; display: flex;
+      flex-direction: column; align-items: center; justify-content: center;
+      padding: 24px; text-align: center;
+    }
+    .icon { font-size: 4rem; margin-bottom: 20px; }
+    h1 { font-size: 2rem; font-weight: 800; margin-bottom: 10px; }
+    p  { color: #888; max-width: 380px; line-height: 1.7; }
+    .btn {
+      display: inline-block; margin-top: 28px;
+      padding: 12px 28px; background: #6c63ff; color: #fff;
+      border-radius: 50px; text-decoration: none; font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="icon">📡</div>
+  <h1>You're Offline</h1>
+  <p>Check your internet connection and try again. Payment requires an active connection.</p>
+  <a href="/" class="btn" onclick="location.reload(); return false;">Try Again</a>
+</body>
+</html>

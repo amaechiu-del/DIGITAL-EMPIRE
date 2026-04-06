@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#6c63ff" />
+  <title>Payment Successful | DIGITAL-EMPIRE</title>
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-72x72.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #6c63ff; --bg: #0a0a1a; --bg2: #12122a; --card: #1e1e40;
+      --text: #e8e8f0; --muted: #888; --success: #00d97e; --radius: 12px;
+    }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; display: flex;
+      flex-direction: column; align-items: center; justify-content: center;
+      padding: 24px; text-align: center;
+    }
+    .card {
+      background: var(--card); border-radius: 20px;
+      padding: 48px 36px; max-width: 480px; width: 100%;
+      box-shadow: 0 24px 60px rgba(0,0,0,.5);
+      border: 1px solid rgba(0,217,126,.2);
+    }
+    .success-icon {
+      width: 90px; height: 90px;
+      background: rgba(0,217,126,.12); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem; margin: 0 auto 28px;
+      border: 2px solid rgba(0,217,126,.3);
+    }
+    h1 { font-size: 1.9rem; font-weight: 800; margin-bottom: 10px; }
+    p  { color: var(--muted); line-height: 1.7; }
+    .ref-badge {
+      background: var(--bg2); border-radius: 8px; padding: 12px 18px;
+      margin: 20px 0; font-family: monospace; font-size: .95rem;
+      word-break: break-all; color: var(--success);
+    }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 28px; }
+    .btn {
+      padding: 12px 26px; border-radius: 50px; font-weight: 700;
+      font-size: .95rem; cursor: pointer; border: none; text-decoration: none;
+      transition: opacity .2s;
+    }
+    .btn:hover { opacity: .88; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-outline { background: transparent; color: var(--primary);
+                   border: 2px solid var(--primary); }
+    .powered { margin-top: 32px; font-size: .78rem; color: var(--muted); }
+    .powered a { color: var(--primary); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="success-icon">✅</div>
+    <h1>Payment Successful!</h1>
+    <p>Your order has been confirmed. Thank you for choosing DOMISLINK INTERNATIONAL.</p>
+
+    <div id="ref-section" class="ref-badge" aria-label="Transaction reference">
+      <!-- Filled by JS -->
+    </div>
+
+    <p>A receipt has been sent to your email address. We will deliver your digital product within 24 hours.</p>
+
+    <div class="actions">
+      <a href="/" class="btn btn-primary">Continue Shopping</a>
+      <a href="/#orders" class="btn btn-outline">View Orders</a>
+    </div>
+
+    <p class="powered">Payments secured by <a href="https://paystack.com" rel="noopener" target="_blank">Paystack</a></p>
+  </div>
+
+  <script>
+    'use strict';
+    const params = new URLSearchParams(window.location.search);
+    const ref    = params.get('ref');
+    const refSection = document.getElementById('ref-section');
+    if (ref && refSection) {
+      refSection.textContent = 'Ref: ' + ref;
+    } else if (refSection) {
+      refSection.style.display = 'none';
+    }
+  </script>
+</body>
+</html>
