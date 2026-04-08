@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="DOMISLINK INTERNATIONAL – Your Digital Services Empire. Secure Paystack payments." />
+  <meta name="theme-color" content="#6c63ff" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="DigitalEmpire" />
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-72x72.png" />
+
+  <title>DIGITAL-EMPIRE | DOMISLINK INTERNATIONAL</title>
+
+  <!-- Paystack public key – replace with your actual key.
+       When using the Node.js server, this is injected at runtime via an
+       EJS/Handlebars template or an environment-driven build step.
+       NEVER place your secret key here. -->
+  <meta name="paystack-public-key" content="pk_test_REPLACE_WITH_YOUR_PUBLIC_KEY" />
+
+  <!-- Paystack JS SDK -->
+  <script src="https://js.paystack.co/v2/inline.js"></script>
+
+  <style>
+    /* ── Reset & Custom Properties ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:   #6c63ff;
+      --primary-d: #554fd8;
+      --accent:    #ff6584;
+      --bg:        #0a0a1a;
+      --bg2:       #12122a;
+      --bg3:       #1a1a3a;
+      --card:      #1e1e40;
+      --text:      #e8e8f0;
+      --muted:     #888;
+      --success:   #00d97e;
+      --error:     #ff4444;
+      --warning:   #ffb300;
+      --radius:    12px;
+      --shadow:    0 8px 32px rgba(0,0,0,.45);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ── Utility ────────────────────────────────────────────────────────── */
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+    .hidden { display: none !important; }
+
+    /* ── Offline Banner ─────────────────────────────────────────────────── */
+    #offline-banner {
+      display: none;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+      background: var(--warning); color: #1a1a00;
+      text-align: center; padding: 10px 16px;
+      font-weight: 600; font-size: .9rem;
+    }
+    body.offline #offline-banner { display: block; }
+
+    /* ── Navigation ─────────────────────────────────────────────────────── */
+    nav {
+      background: rgba(10,10,26,.92);
+      backdrop-filter: blur(12px);
+      position: sticky; top: 0; z-index: 100;
+      border-bottom: 1px solid rgba(108,99,255,.25);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px;
+    }
+    .nav-logo { font-size: 1.35rem; font-weight: 800; color: var(--primary); text-decoration: none; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 24px; list-style: none; }
+    .nav-links a { color: var(--text); text-decoration: none; font-size: .95rem; transition: color .2s; }
+    .nav-links a:hover { color: var(--primary); }
+    .nav-cart-btn {
+      background: var(--primary); color: #fff; border: none;
+      padding: 8px 18px; border-radius: 50px; cursor: pointer;
+      font-size: .9rem; font-weight: 600; transition: background .2s;
+      position: relative;
+    }
+    .nav-cart-btn:hover { background: var(--primary-d); }
+    #cart-count {
+      position: absolute; top: -6px; right: -6px;
+      background: var(--accent); color: #fff;
+      border-radius: 50%; width: 20px; height: 20px;
+      font-size: .7rem; display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+    }
+
+    /* ── Hero ───────────────────────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(135deg, var(--bg2) 0%, var(--bg3) 100%);
+      padding: 80px 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(108,99,255,.18) 0%, transparent 70%);
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 900; line-height: 1.15;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #fff 30%, var(--primary));
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p { font-size: 1.15rem; color: var(--muted); max-width: 600px; margin: 0 auto 36px; }
+    .hero-cta {
+      display: inline-flex; gap: 14px; flex-wrap: wrap; justify-content: center;
+    }
+    .btn {
+      padding: 14px 32px; border-radius: 50px; font-weight: 700;
+      font-size: 1rem; cursor: pointer; border: none;
+      transition: transform .15s, box-shadow .15s;
+      text-decoration: none; display: inline-block;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.3); }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-d); }
+    .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+    .btn-outline:hover { background: rgba(108,99,255,.12); }
+
+    /* ── Products Grid ──────────────────────────────────────────────────── */
+    .section { padding: 60px 20px; max-width: 1200px; margin: 0 auto; }
+    .section-title {
+      text-align: center; font-size: 1.9rem; font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .section-subtitle {
+      text-align: center; color: var(--muted); margin-bottom: 44px;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .product-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform .2s, box-shadow .2s;
+      border: 1px solid rgba(108,99,255,.15);
+    }
+    .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.5); }
+    .product-img {
+      width: 100%; height: 180px;
+      background: linear-gradient(135deg, var(--bg3), var(--primary));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3.5rem;
+    }
+    .product-info { padding: 20px; }
+    .product-badge {
+      display: inline-block; padding: 3px 10px;
+      background: rgba(108,99,255,.2); color: var(--primary);
+      border-radius: 50px; font-size: .75rem; font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .product-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+    .product-desc { color: var(--muted); font-size: .88rem; margin-bottom: 16px; }
+    .product-footer { display: flex; align-items: center; justify-content: space-between; }
+    .product-price { font-size: 1.25rem; font-weight: 800; color: var(--success); }
+    .add-to-cart-btn {
+      background: var(--primary); color: #fff; border: none;
+      padding: 8px 18px; border-radius: 50px; cursor: pointer;
+      font-size: .88rem; font-weight: 600; transition: background .2s;
+    }
+    .add-to-cart-btn:hover { background: var(--primary-d); }
+
+    /* ── Cart Sidebar ───────────────────────────────────────────────────── */
+    .cart-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.6);
+      z-index: 200; backdrop-filter: blur(3px);
+      opacity: 0; pointer-events: none; transition: opacity .25s;
+    }
+    .cart-overlay.open { opacity: 1; pointer-events: all; }
+    .cart-sidebar {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: min(420px, 100vw);
+      background: var(--bg2);
+      box-shadow: -4px 0 30px rgba(0,0,0,.5);
+      z-index: 201;
+      transform: translateX(100%); transition: transform .3s ease;
+      display: flex; flex-direction: column;
+    }
+    .cart-overlay.open .cart-sidebar { transform: translateX(0); }
+    .cart-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .cart-header h2 { font-size: 1.2rem; font-weight: 700; }
+    .cart-close-btn {
+      background: none; border: none; color: var(--muted);
+      font-size: 1.6rem; cursor: pointer; transition: color .2s; line-height: 1;
+    }
+    .cart-close-btn:hover { color: var(--text); }
+    .cart-items { flex: 1; overflow-y: auto; padding: 16px 24px; }
+    .cart-empty {
+      text-align: center; padding: 60px 20px; color: var(--muted);
+    }
+    .cart-empty-icon { font-size: 3rem; margin-bottom: 12px; }
+    .cart-item {
+      display: flex; gap: 14px; padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .cart-item-icon {
+      width: 56px; height: 56px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--bg3), var(--primary));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; flex-shrink: 0;
+    }
+    .cart-item-details { flex: 1; }
+    .cart-item-name { font-weight: 600; font-size: .95rem; }
+    .cart-item-price { color: var(--success); font-size: .9rem; font-weight: 700; margin-top: 4px; }
+    .cart-item-qty {
+      display: flex; align-items: center; gap: 10px; margin-top: 8px;
+    }
+    .qty-btn {
+      background: var(--bg3); border: none; color: var(--text);
+      width: 28px; height: 28px; border-radius: 6px; cursor: pointer;
+      font-size: 1rem; transition: background .2s;
+    }
+    .qty-btn:hover { background: var(--primary); }
+    .remove-item-btn {
+      background: none; border: none; color: var(--muted);
+      cursor: pointer; font-size: 1.1rem; transition: color .2s;
+      align-self: flex-start; padding: 2px;
+    }
+    .remove-item-btn:hover { color: var(--error); }
+    .cart-footer {
+      padding: 20px 24px;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+    .cart-total {
+      display: flex; justify-content: space-between;
+      font-size: 1.1rem; font-weight: 700; margin-bottom: 18px;
+    }
+    .cart-total-amount { color: var(--success); }
+
+    /* ── Payment Form / Checkout Modal ──────────────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.7); backdrop-filter: blur(4px);
+      z-index: 300;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      opacity: 0; pointer-events: none; transition: opacity .25s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--bg2);
+      border-radius: 16px;
+      box-shadow: 0 24px 60px rgba(0,0,0,.6);
+      width: 100%; max-width: 500px;
+      max-height: 90vh; overflow-y: auto;
+      border: 1px solid rgba(108,99,255,.2);
+      transform: scale(.95) translateY(10px);
+      transition: transform .25s ease;
+    }
+    .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+    .modal-header {
+      padding: 24px 28px 0;
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .modal-title { font-size: 1.3rem; font-weight: 800; }
+    .modal-subtitle { color: var(--muted); font-size: .875rem; margin-top: 4px; }
+    .modal-close {
+      background: none; border: none; color: var(--muted);
+      font-size: 1.5rem; cursor: pointer; transition: color .2s; line-height: 1;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal-body { padding: 24px 28px; }
+    .order-summary {
+      background: var(--bg3);
+      border-radius: var(--radius); padding: 16px;
+      margin-bottom: 24px;
+    }
+    .order-summary-title { font-size: .8rem; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--muted); margin-bottom: 12px; }
+    .order-line {
+      display: flex; justify-content: space-between;
+      font-size: .92rem; padding: 4px 0;
+    }
+    .order-line.total {
+      border-top: 1px solid rgba(255,255,255,.08);
+      margin-top: 10px; padding-top: 10px;
+      font-weight: 700; font-size: 1rem;
+    }
+    .order-line.total .amount { color: var(--success); }
+
+    /* form fields */
+    .form-group { margin-bottom: 18px; }
+    .form-label {
+      display: block; font-size: .85rem; font-weight: 600;
+      margin-bottom: 6px; color: var(--text);
+    }
+    .form-input {
+      width: 100%; padding: 12px 16px;
+      background: var(--bg3); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px; color: var(--text);
+      font-size: .95rem; transition: border-color .2s;
+      outline: none;
+    }
+    .form-input:focus { border-color: var(--primary); }
+    .form-input.invalid { border-color: var(--error); }
+    .form-error { color: var(--error); font-size: .8rem; margin-top: 4px; display: none; }
+    .form-error.visible { display: block; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    /* security note */
+    .security-note {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(0,217,126,.08); border: 1px solid rgba(0,217,126,.2);
+      border-radius: 8px; padding: 10px 14px;
+      font-size: .8rem; color: var(--success); margin-bottom: 20px;
+    }
+
+    /* submit / pay button */
+    .pay-btn {
+      width: 100%; padding: 16px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-d));
+      color: #fff; border: none; border-radius: 10px;
+      font-size: 1.05rem; font-weight: 700; cursor: pointer;
+      transition: opacity .2s, transform .15s;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .pay-btn:hover:not(:disabled) { opacity: .9; transform: translateY(-1px); }
+    .pay-btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+    .pay-btn .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Toast Notifications ────────────────────────────────────────────── */
+    #toast-container {
+      position: fixed; bottom: 24px; right: 24px;
+      z-index: 9999; display: flex; flex-direction: column; gap: 10px;
+    }
+    .toast {
+      min-width: 280px; max-width: 380px;
+      background: var(--card); border-radius: 10px;
+      padding: 14px 18px; box-shadow: 0 6px 24px rgba(0,0,0,.4);
+      display: flex; align-items: flex-start; gap: 12px;
+      animation: slideIn .3s ease;
+      border-left: 4px solid var(--primary);
+    }
+    .toast.success { border-left-color: var(--success); }
+    .toast.error   { border-left-color: var(--error); }
+    .toast.warning { border-left-color: var(--warning); }
+    .toast-icon { font-size: 1.2rem; flex-shrink: 0; }
+    .toast-content { flex: 1; }
+    .toast-title { font-weight: 700; font-size: .9rem; }
+    .toast-msg   { font-size: .82rem; color: var(--muted); margin-top: 2px; }
+    @keyframes slideIn { from { transform: translateX(120%); opacity: 0; }
+                         to   { transform: translateX(0);    opacity: 1; } }
+
+    /* ── Install Prompt ─────────────────────────────────────────────────── */
+    #install-prompt {
+      position: fixed; bottom: 24px; left: 24px;
+      background: var(--card); border-radius: 14px; padding: 18px 20px;
+      max-width: 320px; box-shadow: var(--shadow);
+      border: 1px solid rgba(108,99,255,.3);
+      display: none; z-index: 150;
+    }
+    #install-prompt h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    #install-prompt p  { font-size: .83rem; color: var(--muted); margin-bottom: 14px; }
+    .install-actions { display: flex; gap: 10px; }
+
+    /* ── Footer ─────────────────────────────────────────────────────────── */
+    footer {
+      background: var(--bg2); padding: 40px 20px;
+      text-align: center; color: var(--muted); font-size: .875rem;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+    footer a { color: var(--primary); text-decoration: none; }
+
+    /* ── Responsive ─────────────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .form-row  { grid-template-columns: 1fr; }
+      #install-prompt { left: 12px; right: 12px; max-width: none; }
+      #toast-container { left: 12px; right: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Offline Banner -->
+  <div id="offline-banner" role="alert">
+    ⚠️ You are offline. Payment requires an internet connection.
+  </div>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">Digital<span>Empire</span></a>
+      <ul class="nav-links">
+        <li><a href="#products">Products</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <button class="nav-cart-btn" id="open-cart-btn" aria-label="Open cart">
+        🛒 Cart
+        <span id="cart-count" aria-live="polite">0</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1>Your Digital Services<br />Empire Starts Here</h1>
+    <p>Premium digital products &amp; services from DOMISLINK INTERNATIONAL. Secure payments powered by Paystack.</p>
+    <div class="hero-cta">
+      <a href="#products" class="btn btn-primary">Browse Products</a>
+      <a href="#about"    class="btn btn-outline">Learn More</a>
+    </div>
+  </section>
+
+  <!-- Products -->
+  <main class="section" id="products">
+    <h2 class="section-title">Our Digital Products</h2>
+    <p class="section-subtitle">Professional digital solutions for every need</p>
+
+    <div class="products-grid" id="products-grid">
+      <!-- Populated by JS -->
+    </div>
+  </main>
+
+  <!-- About -->
+  <section class="section" id="about" style="background: var(--bg2);">
+    <div style="max-width:700px; margin:0 auto; text-align:center;">
+      <h2 class="section-title">About DOMISLINK INTERNATIONAL</h2>
+      <p style="color:var(--muted); margin-top:16px; line-height:1.8;">
+        We provide world-class digital services to businesses and individuals across Africa and beyond.
+        All payments are processed securely via <strong style="color:var(--primary);">Paystack</strong> —
+        Nigeria's leading payment gateway. Your transactions are encrypted and fully protected.
+      </p>
+    </div>
+  </section>
+
+  <!-- Cart Sidebar -->
+  <div class="cart-overlay" id="cart-overlay" role="dialog" aria-modal="true" aria-label="Shopping cart">
+    <div class="cart-sidebar">
+      <div class="cart-header">
+        <h2>🛒 Your Cart</h2>
+        <button class="cart-close-btn" id="close-cart-btn" aria-label="Close cart">×</button>
+      </div>
+
+      <div class="cart-items" id="cart-items-list">
+        <div class="cart-empty">
+          <div class="cart-empty-icon">🛒</div>
+          <p>Your cart is empty</p>
+        </div>
+      </div>
+
+      <div class="cart-footer" id="cart-footer" style="display:none;">
+        <div class="cart-total">
+          <span>Total</span>
+          <span class="cart-total-amount" id="cart-total-display">₦0</span>
+        </div>
+        <button class="btn btn-primary" style="width:100%;" id="checkout-btn">
+          Proceed to Checkout
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment / Checkout Modal -->
+  <div class="modal-overlay" id="checkout-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title" id="modal-title">Checkout</h2>
+          <p class="modal-subtitle">Complete your purchase securely</p>
+        </div>
+        <button class="modal-close" id="modal-close-btn" aria-label="Close checkout">×</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Order Summary -->
+        <div class="order-summary">
+          <div class="order-summary-title">Order Summary</div>
+          <div id="order-summary-lines"><!-- filled by JS --></div>
+        </div>
+
+        <!-- Checkout Form -->
+        <form id="checkout-form" novalidate>
+          <!-- Hidden CSRF token (server-rendered in production) -->
+          <input type="hidden" id="csrf-token" name="_csrf" value="" />
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="first-name">First Name *</label>
+              <input type="text" id="first-name" name="firstName" class="form-input"
+                     autocomplete="given-name" required />
+              <span class="form-error" id="first-name-error">Required</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="last-name">Last Name *</label>
+              <input type="text" id="last-name" name="lastName" class="form-input"
+                     autocomplete="family-name" required />
+              <span class="form-error" id="last-name-error">Required</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="email">Email Address *</label>
+            <input type="email" id="email" name="email" class="form-input"
+                   autocomplete="email" required />
+            <span class="form-error" id="email-error">Enter a valid email</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" class="form-input"
+                   autocomplete="tel" placeholder="+234 800 000 0000" />
+          </div>
+
+          <div class="security-note">
+            🔒 Your payment is secured by Paystack. We never store your card details.
+          </div>
+
+          <button type="submit" class="pay-btn" id="pay-btn">
+            <span id="pay-btn-text">Pay Now</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" aria-live="polite" aria-atomic="false"></div>
+
+  <!-- PWA Install Prompt -->
+  <div id="install-prompt">
+    <h3>📲 Install App</h3>
+    <p>Add DIGITAL-EMPIRE to your home screen for a faster, offline-ready experience.</p>
+    <div class="install-actions">
+      <button class="btn btn-primary" id="install-btn" style="padding:10px 20px; font-size:.875rem;">Install</button>
+      <button class="btn btn-outline"  id="dismiss-install-btn" style="padding:10px 20px; font-size:.875rem;">Not now</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 <strong>DOMISLINK INTERNATIONAL</strong> · DIGITAL-EMPIRE PWA</p>
+    <p style="margin-top:8px;">Payments secured by <a href="https://paystack.com" rel="noopener" target="_blank">Paystack</a></p>
+  </footer>
+
+  <!-- Application Scripts -->
+  <script src="/js/cart.js"></script>
+  <script src="/js/payment.js"></script>
+  <script src="/app.js"></script>
+
+</body>
+</html>
