@@ -5,7 +5,7 @@ import ProductDetail from "@/components/products/ProductDetail";
 import ProductGrid from "@/components/products/ProductGrid";
 
 interface ProductPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export async function generateStaticParams() {
@@ -13,7 +13,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
-  const product = getProductById(params.id);
+  const { id } = await params;
+  const product = getProductById(id);
   if (!product) return { title: "Product Not Found" };
   return {
     title: product.name,
@@ -21,8 +22,9 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   };
 }
 
-export default function ProductPage({ params }: ProductPageProps) {
-  const product = getProductById(params.id);
+export default async function ProductPage({ params }: ProductPageProps) {
+  const { id } = await params;
+  const product = getProductById(id);
   if (!product) notFound();
 
   const related = products

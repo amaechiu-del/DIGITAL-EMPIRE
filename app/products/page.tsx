@@ -10,17 +10,19 @@ export const metadata: Metadata = {
   description: "Browse all digital products, courses, training, and software.",
 };
 
-interface ProductsPageProps {
-  searchParams: {
-    category?: string;
-    search?: string;
-    sort?: string;
-    minPrice?: string;
-    maxPrice?: string;
-  };
+interface SearchParams {
+  category?: string;
+  search?: string;
+  sort?: string;
+  minPrice?: string;
+  maxPrice?: string;
 }
 
-function filterAndSort(params: ProductsPageProps["searchParams"]): Product[] {
+interface ProductsPageProps {
+  searchParams: Promise<SearchParams>;
+}
+
+function filterAndSort(params: SearchParams): Product[] {
   let result = [...products];
 
   if (params.category) {
@@ -64,8 +66,9 @@ function filterAndSort(params: ProductsPageProps["searchParams"]): Product[] {
   return result;
 }
 
-export default function ProductsPage({ searchParams }: ProductsPageProps) {
-  const filtered = filterAndSort(searchParams);
+export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+  const params = await searchParams;
+  const filtered = filterAndSort(params);
 
   return (
     <div className="container mx-auto px-4 py-8">
