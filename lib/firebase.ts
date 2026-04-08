@@ -46,10 +46,13 @@ export function getFirebaseStorage(): FirebaseStorage {
   return _storage;
 }
 
-// Re-export for convenience (only call in client context)
-export { getFirebaseApp as app };
-export const auth = null as unknown as Auth;   // placeholder; use getFirebaseAuth()
-export const db = null as unknown as Firestore;  // placeholder; use getFirebaseDb()
-export const storage = null as unknown as FirebaseStorage; // placeholder; use getFirebaseStorage()
+// NOTE: The exports below are intentional null placeholders for legacy import
+// compatibility only. You MUST use the getter functions (getFirebaseAuth,
+// getFirebaseDb, getFirebaseStorage) in all application code, as these
+// initialise Firebase lazily and are safe to call in any context (client or server).
+// Importing `auth`, `db`, or `storage` directly WILL cause runtime errors.
+export const auth = null as unknown as Auth;      // use getFirebaseAuth() instead
+export const db = null as unknown as Firestore;   // use getFirebaseDb() instead
+export const storage = null as unknown as FirebaseStorage; // use getFirebaseStorage() instead
 
 

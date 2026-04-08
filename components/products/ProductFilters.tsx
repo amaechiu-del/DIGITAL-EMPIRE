@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback, useRef } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -32,14 +33,24 @@ export default function ProductFilters() {
   const currentMinPrice = searchParams.get("minPrice") ?? "";
   const currentMaxPrice = searchParams.get("maxPrice") ?? "";
 
-  function updateParam(key: string, value: string) {
-    const params = new URLSearchParams(searchParams.toString());
-    if (value) {
-      params.set(key, value);
-    } else {
-      params.delete(key);
-    }
-    router.push(`${pathname}?${params.toString()}`);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const updateParam = useCallback(
+    (key: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (value) {
+        params.set(key, value);
+      } else {
+        params.delete(key);
+      }
+      router.push(`${pathname}?${params.toString()}`);
+    },
+    [router, pathname, searchParams]
+  );
+
+  function updateSearchDebounced(value: string) {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => updateParam("search", value), 400);
   }
 
   function clearFilters() {
@@ -76,7 +87,7 @@ export default function ProductFilters() {
             className="pl-9"
             placeholder="Search products..."
             defaultValue={currentSearch}
-            onChange={(e) => updateParam("search", e.target.value)}
+            onChange={(e) => updateSearchDebounced(e.target.value)}
           />
         </div>
       </div>

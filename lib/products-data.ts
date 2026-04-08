@@ -67,7 +67,7 @@ export const products: Product[] = [
     description:
       "Understand blockchain, crypto trading, and how to invest safely in digital assets.",
     longDescription:
-      "Navigate the volatile world of cryptocurrency with confidence. This course teaches you blockchain fundamentals, how to analyse crypto markets, risk management, DeFi protocols, and how to build a diversified crypto portfolio suited to Nigerian investors. Avoid common scams and make data-driven investment decisions.",
+      "Navigate the volatile world of cryptocurrency with confidence. This course teaches you blockchain fundamentals, how to analyze crypto markets, risk management, DeFi protocols, and how to build a diversified crypto portfolio suited to Nigerian investors. Avoid common scams and make data-driven investment decisions.",
     price: 28000,
     originalPrice: 45000,
     category: "courses",
