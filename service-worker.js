@@ -102,6 +102,9 @@ self.addEventListener('fetch', (e) => {
         const fetchPromise = fetch(request).then((res) => {
           cache.put(request, res.clone());
           return res;
+        }).catch((err) => {
+          if (cached) return cached;
+          throw err;
         });
         return cached || fetchPromise;
       }),

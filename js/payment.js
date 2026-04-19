@@ -140,13 +140,16 @@ async function verifyPayment(reference, attempt = 1) {
 
 // ── On Payment Success ────────────────────────────────────────────────────
 function handlePaymentSuccess(reference, verificationData) {
+  // Capture items before clearing the cart
+  const purchasedItems = window.Cart?.items() ?? [];
+
   // Clear cart
   window.Cart?.clear();
 
   // Persist order to localStorage for order history
   const order = {
     reference,
-    items: window.Cart?.items() ?? [],
+    items: purchasedItems,
     total: verificationData?.data?.data?.amount ?? 0,
     date: new Date().toISOString(),
     status: 'paid',

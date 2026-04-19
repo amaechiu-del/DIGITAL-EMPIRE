@@ -122,25 +122,60 @@ jobs:
     name: Server Smoke Test
     needs: validate
     runs-on: ubuntu-latest
-    # Only run when secrets are available (they are not available in forks / PRs from external contributors)
-    if: secrets.PAYSTACK_PUBLIC_KEY != '' && secrets.PAYSTACK_SECRET_KEY != ''
+    # Gate via env vars populated from secrets; the skip step exits early when they are absent.
     env:
       PAYSTACK_PUBLIC_KEY: ${{ secrets.PAYSTACK_PUBLIC_KEY }}
       PAYSTACK_SECRET_KEY: ${{ secrets.PAYSTACK_SECRET_KEY }}
       NODE_ENV: test
       APP_PORT: 3001
     steps:
+      - name: Check Paystack secrets
+        id: check-secrets
+        run: |
+          if [ -z "$PAYSTACK_PUBLIC_KEY" ] || [ -z "$PAYSTACK_SECRET_KEY" ]; then
+            echo "⚠️  Paystack secrets not configured – skipping server smoke test."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Checkout
+        if: steps.check-secrets.outputs.skip != 'true'
         uses: actions/checkout@v4
 
       - name: Setup Node.js
+        if: steps.check-secrets.outputs.skip != 'true'
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
+        if: steps.check-secrets.outputs.skip != 'true'
         run: npm ci
 
-      - name: Run server tests
-        run: npm test --if-present
+      - name: HTTP smoke test
+        if: steps.check-secrets.outputs.skip != 'true'
+        run: |
+          node server.js &
+          SERVER_PID=$!
+          # Wait up to 15 seconds for server to accept connections
+          READY=0
+          for i in $(seq 1 15); do
+            if curl -sf http://localhost:3001/api/csrf-token > /dev/null 2>&1; then
+              echo "✅ Server responded on /api/csrf-token"
+              READY=1
+              break
+            fi
+            sleep 1
+          done
+          if [ "$READY" -eq 0 ]; then
+            echo "❌ Server did not start in time"
+            kill "$SERVER_PID"
+            exit 1
+          fi
+          RESPONSE=$(curl -sf http://localhost:3001/api/csrf-token)
+          echo "$RESPONSE" | grep -q "csrfToken" \
+            && echo "✅ CSRF token endpoint working" \
+            || (echo "❌ CSRF token endpoint failed: $RESPONSE" && kill "$SERVER_PID" && exit 1)
+          kill "$SERVER_PID"
