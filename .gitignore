@@ -1,32 +1,8 @@
-# Dependencies
 node_modules/
-.pnp
-.pnp.js
-
-# Environment variables (NEVER commit real keys)
-.env
-.env.local
-.env.production
-
-# Build output
+.next/
+out/
 dist/
-build/
-.cache/
-
-# Logs
-logs/
-*.log
-npm-debug.log*
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Editor
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Test coverage
-coverage/
+.env.local
+.env*.local
+*.tsbuildinfo
+.turbo/

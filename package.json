@@ -1,33 +1,21 @@
 {
-  "name": "digital-empire-pwa",
-  "version": "1.0.0",
-  "description": "DOMISLINK INTERNATIONAL – Digital Empire Progressive Web App with Paystack payment integration",
-  "main": "server.js",
+  "name": "domislink-empire",
+  "private": true,
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
-    "serve": "npx serve .",
-    "test": "node --test tests/"
-  },
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "express-rate-limit": "^7.3.1",
-    "helmet": "^7.1.0"
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "start": "turbo run start",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "clean": "turbo run clean"
   },
   "devDependencies": {
-    "nodemon": "^3.1.4"
+    "turbo": "^2.9.6",
+    "typescript": "^5.0.0"
   },
-  "keywords": [
-    "pwa",
-    "paystack",
-    "payment",
-    "digital-empire"
+  "workspaces": [
+    "apps/*",
+    "packages/*"
   ],
-  "author": "DOMISLINK INTERNATIONAL",
-  "license": "MIT"
+  "packageManager": "npm@10.9.2"
 }
