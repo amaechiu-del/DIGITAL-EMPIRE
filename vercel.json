@@ -1,0 +1,1 @@
+{\n  "buildCommand": "npm run build",\n  "devCommand": "npm run dev",\n  "installCommand": "npm install",\n  "framework": "nextjs",\n  "outputDirectory": "apps/realestate/.next",\n  "env": {\n    "NODE_ENV": "production"\n  }\n}
