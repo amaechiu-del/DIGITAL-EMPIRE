@@ -1,0 +1,15 @@
+# Cloudflare Workers Configuration
+
+# This file contains the configuration for deploying with Wrangler.
+name = "DIGITAL-EMPIRE"
+type = "javascript"
+compatibility_date = "2026-04-25"
+
+[build]
+command = "npm install"
+[build.upload]
+bucket = "dist"
+
+[[building.routes]]
+pattern = "*"
+serving = "DIGITAL-EMPIRE"
