@@ -2,20 +2,14 @@
   "name": "domislink-empire",
   "private": true,
   "scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-    "start": "turbo run start",
-    "lint": "turbo run lint",
-    "type-check": "turbo run type-check",
-    "clean": "turbo run clean"
+    "start": "node server.js",
+    "dev": "node server.js"
   },
-  "devDependencies": {
-    "turbo": "^2.9.6",
-    "typescript": "^5.0.0"
-  },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "packageManager": "npm@10.9.2"
+  "dependencies": {
+    "cors": "2.8.5",
+    "dotenv": "17.2.2",
+    "express": "^4.21.2",
+    "express-rate-limit": "8.1.0",
+    "helmet": "8.1.0"
+  }
 }
